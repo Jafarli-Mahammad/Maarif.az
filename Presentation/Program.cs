@@ -168,7 +168,7 @@ internal class Program
 
         if (!app.Environment.IsDevelopment())
         {
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection(); // Commented out for Render proxy compatibility (prevents infinite redirect loops)
         }
 
         app.UseStaticFiles();
