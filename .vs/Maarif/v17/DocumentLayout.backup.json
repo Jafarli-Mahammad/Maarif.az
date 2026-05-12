@@ -3,12 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\user\\source\\repos\\Maarif\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{26BB4B99-E4DB-8D6F-9A99-39E9DFD5E68A}|Presentation\\Presentation.csproj|c:\\users\\user\\source\\repos\\maarif\\presentation\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{26BB4B99-E4DB-8D6F-9A99-39E9DFD5E68A}|Presentation\\Presentation.csproj|solutionrelative:presentation\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3D23CB67-6332-438A-93C5-15C29DF7C3FA}|DataAccessLayer\\DataAccessLayer.csproj|c:\\users\\user\\source\\repos\\maarif\\dataaccesslayer\\datacontexts\\datacontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3D23CB67-6332-438A-93C5-15C29DF7C3FA}|DataAccessLayer\\DataAccessLayer.csproj|solutionrelative:dataaccesslayer\\datacontexts\\datacontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CED66CEC-9655-4FAF-A469-2A5C630C2608}|Application\\Application.csproj|c:\\users\\user\\source\\repos\\maarif\\application\\modules\\studentsmodule\\commands\\studentlogincommand\\studentloginresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CED66CEC-9655-4FAF-A469-2A5C630C2608}|Application\\Application.csproj|solutionrelative:application\\modules\\studentsmodule\\commands\\studentlogincommand\\studentloginresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CED66CEC-9655-4FAF-A469-2A5C630C2608}|Application\\Application.csproj|c:\\users\\user\\source\\repos\\maarif\\application\\modules\\studentsmodule\\commands\\studentlogincommand\\studentloginrequesthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CED66CEC-9655-4FAF-A469-2A5C630C2608}|Application\\Application.csproj|solutionrelative:application\\modules\\studentsmodule\\commands\\studentlogincommand\\studentloginrequesthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CED66CEC-9655-4FAF-A469-2A5C630C2608}|Application\\Application.csproj|c:\\users\\user\\source\\repos\\maarif\\application\\modules\\studentsmodule\\commands\\studentlogincommand\\studentloginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CED66CEC-9655-4FAF-A469-2A5C630C2608}|Application\\Application.csproj|solutionrelative:application\\modules\\studentsmodule\\commands\\studentlogincommand\\studentloginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{26BB4B99-E4DB-8D6F-9A99-39E9DFD5E68A}|Presentation\\Presentation.csproj|c:\\users\\user\\source\\repos\\maarif\\presentation\\controllers\\apiauthcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{26BB4B99-E4DB-8D6F-9A99-39E9DFD5E68A}|Presentation\\Presentation.csproj|solutionrelative:presentation\\controllers\\apiauthcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{26BB4B99-E4DB-8D6F-9A99-39E9DFD5E68A}|Presentation\\Presentation.csproj|c:\\users\\user\\source\\repos\\maarif\\presentation\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{26BB4B99-E4DB-8D6F-9A99-39E9DFD5E68A}|Presentation\\Presentation.csproj|solutionrelative:presentation\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{26BB4B99-E4DB-8D6F-9A99-39E9DFD5E68A}|Presentation\\Presentation.csproj|c:\\users\\user\\source\\repos\\maarif\\presentation\\views\\apiauth\\login.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -34,7 +50,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 200,
-          "SelectedChildIndex": 11,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -62,7 +78,56 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DataContext.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Maarif\\DataAccessLayer\\DataContexts\\DataContext.cs",
+              "RelativeDocumentMoniker": "DataAccessLayer\\DataContexts\\DataContext.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\Maarif\\DataAccessLayer\\DataContexts\\DataContext.cs",
+              "RelativeToolTip": "DataAccessLayer\\DataContexts\\DataContext.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAAABMAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-05T07:03:05.482Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "StudentLoginResponseDto.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Maarif\\Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginResponseDto.cs",
+              "RelativeDocumentMoniker": "Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginResponseDto.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\Maarif\\Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginResponseDto.cs",
+              "RelativeToolTip": "Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginResponseDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-05T07:02:37.69Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "StudentLoginRequestHandler.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Maarif\\Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginRequestHandler.cs",
+              "RelativeDocumentMoniker": "Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginRequestHandler.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\Maarif\\Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginRequestHandler.cs",
+              "RelativeToolTip": "Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginRequestHandler.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAAABMAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-05T07:02:00.462Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "StudentLoginRequest.cs",
+              "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Maarif\\Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginRequest.cs",
+              "RelativeDocumentMoniker": "Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginRequest.cs",
+              "ToolTip": "C:\\Users\\user\\source\\repos\\Maarif\\Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginRequest.cs",
+              "RelativeToolTip": "Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-05T07:01:42.32Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "Login.html",
               "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Maarif\\Presentation\\Views\\ApiAuth\\Login.html",
               "RelativeDocumentMoniker": "Presentation\\Views\\ApiAuth\\Login.html",
@@ -74,7 +139,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "ApiAuthController.cs",
               "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Maarif\\Presentation\\Controllers\\ApiAuthController.cs",
               "RelativeDocumentMoniker": "Presentation\\Controllers\\ApiAuthController.cs",
@@ -86,7 +151,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Maarif\\Presentation\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Presentation\\appsettings.Development.json",
@@ -98,7 +163,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Maarif\\Presentation\\appsettings.json",
               "RelativeDocumentMoniker": "Presentation\\appsettings.json",
@@ -110,7 +175,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "Login.cshtml",
               "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Maarif\\Presentation\\Views\\ApiAuth\\Login.cshtml",
               "RelativeDocumentMoniker": "Presentation\\Views\\ApiAuth\\Login.cshtml",
@@ -122,16 +187,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\user\\source\\repos\\Maarif\\Presentation\\Program.cs",
               "RelativeDocumentMoniker": "Presentation\\Program.cs",
               "ToolTip": "C:\\Users\\user\\source\\repos\\Maarif\\Presentation\\Program.cs",
               "RelativeToolTip": "Presentation\\Program.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAAACgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAKAAAAAAAAAAAAAAAAAAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-26T21:31:21.606Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-26T21:31:21.606Z"
             }
           ]
         }

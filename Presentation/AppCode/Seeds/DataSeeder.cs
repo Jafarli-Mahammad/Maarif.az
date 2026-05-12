@@ -76,6 +76,13 @@ namespace Presentation.AppCode.Seeds
 
         public async Task SeedAsync()
         {
+            // If any data exists, assume seeding is complete to save startup time and avoid overwriting user edits
+            if (await db.Faculties.AnyAsync())
+            {
+                logger.LogInformation("Database already seeded. Skipping DataSeeder completely.");
+                return;
+            }
+
             await RunSeederStepAsync(nameof(SeedFacultiesAsync), SeedFacultiesAsync);
             await RunSeederStepAsync(nameof(SeedDepartmentsAsync), SeedDepartmentsAsync);
             await RunSeederStepAsync(nameof(SeedTeachersAsync), SeedTeachersAsync);

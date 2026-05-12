@@ -84,7 +84,7 @@
               "RelativeDocumentMoniker": "DataAccessLayer\\DataContexts\\DataContext.cs",
               "ToolTip": "C:\\Users\\user\\source\\repos\\Maarif\\DataAccessLayer\\DataContexts\\DataContext.cs",
               "RelativeToolTip": "DataAccessLayer\\DataContexts\\DataContext.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAxwBMAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-05T07:03:05.482Z",
               "EditorCaption": ""
@@ -99,8 +99,7 @@
               "RelativeToolTip": "Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginResponseDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T07:02:37.69Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-05T07:02:37.69Z"
             },
             {
               "$type": "Document",
@@ -112,8 +111,7 @@
               "RelativeToolTip": "Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginRequestHandler.cs",
               "ViewState": "AgIAABcAAAAAAAAAAAAAABMAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T07:02:00.462Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-05T07:02:00.462Z"
             },
             {
               "$type": "Document",
@@ -125,8 +123,7 @@
               "RelativeToolTip": "Application\\Modules\\StudentsModule\\Commands\\StudentLoginCommand\\StudentLoginRequest.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAABIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T07:01:42.32Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-05T07:01:42.32Z"
             },
             {
               "$type": "Document",
@@ -150,8 +147,7 @@
               "RelativeToolTip": "Presentation\\Controllers\\ApiAuthController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T06:05:34.94Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-05T06:05:34.94Z"
             },
             {
               "$type": "Document",
@@ -199,8 +195,7 @@
               "RelativeToolTip": "Presentation\\Program.cs",
               "ViewState": "AgIAAKAAAAAAAAAAAAAAAAAAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-26T21:31:21.606Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-26T21:31:21.606Z"
             }
           ]
         }
