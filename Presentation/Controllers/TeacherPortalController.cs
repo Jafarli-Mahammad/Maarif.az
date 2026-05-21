@@ -2,6 +2,8 @@ using Application.Modules.AttendanceModule.Queries.TeacherAttendanceSessionsQuer
 using Application.Modules.SubjectsModule.Queries.PortalSubjectQuery;
 using Application.Modules.TeachersModule.Queries.GetTeacherPortalProfileQuery;
 using Application.Modules.TeachersModule.Queries.GetTeacherScheduleQuery;
+using Application.Modules.GradesModule.Commands.SubmitGrade;
+using Application.Modules.GradesModule.Queries.GetGradesByLesson;
 using Infrastructure.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -132,6 +134,36 @@ namespace Presentation.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GradingTable(int lessonId, int subjectId, CancellationToken cancellationToken)
+        {
+            var userId = User.GetRequiredUserId();
+            var profile = await mediator.Send(
+                new GetTeacherPortalProfileRequest { UserId = userId },
+                cancellationToken);
+
+            if (profile is null)
+                return RedirectToAction(nameof(AuthController.TeacherLogin), "Auth");
+
+            PopulateTeacherSubjectViewBag(profile, "Qiymətləndirmə", "Qiymətləndirmə");
+            ViewBag.SubjectId = subjectId;
+            ViewBag.LessonId = lessonId;
+
+            var grades = await mediator.Send(new GetGradesByLessonQuery { LessonId = lessonId }, cancellationToken);
+
+            return View(grades);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitGrade([FromBody] SubmitGradeCommand command)
+        {
+            var result = await mediator.Send(command);
+            if (!result)
+                return BadRequest(new { message = "Cannot modify finalized grades." });
+
+            return Ok(new { message = "Grade saved successfully." });
         }
 
         private void PopulateTeacherSubjectViewBag(

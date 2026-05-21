@@ -30,5 +30,7 @@ namespace Domain.Models.Entities
 
         public ICollection<StudentGroup> StudentGroups { get; set; }
         public ICollection<Attendance> Attendances { get; set; }
+        public ICollection<Grade> Grades { get; set; }
+        public ICollection<TranscriptRecord> TranscriptRecords { get; set; }
     }
 }

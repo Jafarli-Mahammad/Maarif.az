@@ -1,0 +1,255 @@
+@model List<Application.Modules.GradesModule.Queries.GetGradesByLesson.GradeResponseDto>
+@{
+    ViewData["Title"] = "Qiymətləndirmə";
+}
+
+<div class="page-header">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <div class="d-inline">
+                    <h4>Qiymətləndirmə Cədvəli</h4>
+                    <span>Tələbələrin dərs üzrə ballarının idarə edilməsi.</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-header-breadcrumb">
+                <ul class="breadcrumb-title">
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a asp-controller="Dashboard" asp-action="Index"><i class="feather icon-home"></i></a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a asp-controller="Lessons" asp-action="Index">Dərslər</a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="#!">Qiymətləndirmə</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Tələbə Balları</h5>
+                    <span>Hər tələbənin fərdi komponentlər üzrə balları. Dəyişiklik etmək üçün xanaya klikləyin.</span>
+                </div>
+                <div class="card-block">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="grading-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>№</th>
+                                    <th>Tələbə</th>
+                                    <th>Tələbə №</th>
+                                    <th style="width: 80px;">Davamiyyət</th>
+                                    <th style="width: 80px;">Məşğələ</th>
+                                    <th style="width: 80px;">S.İş</th>
+                                    <th style="width: 80px;">Kollokvium</th>
+                                    <th style="width: 80px;">Lab</th>
+                                    <th class="bg-light" style="width: 80px;"><strong>İmtahan q.</strong></th>
+                                    <th style="width: 80px;">İmtahan</th>
+                                    <th class="bg-light" style="width: 80px;"><strong>Yekun</strong></th>
+                                    <th style="width: 80px;">Dərəcə</th>
+                                    <th style="width: 60px;">GPA</th>
+                                    <th style="width: 100px;">Status</th>
+                                    <th class="text-right" style="width: 120px;">Əməliyyat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ var index = 1; }
+                                @foreach (var grade in Model)
+                                {
+                                    <tr data-student-id="@grade.StudentId" data-lesson-id="@grade.LessonId">
+                                        <td>@(index++)</td>
+                                        <td>
+                                            <a asp-action="CurrentSuccess"
+                                               asp-route-studentId="@grade.StudentId"
+                                               asp-route-lessonId="@grade.LessonId"
+                                               class="text-primary">
+                                                @grade.StudentFullName
+                                            </a>
+                                        </td>
+                                        <td><small class="text-muted">@grade.StudentNumber</small></td>
+                                        <td class="attendance-score">@grade.AttendanceScore</td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm grade-input" data-field="ManualPracticalScore" value="@(grade.ManualPracticalScore)" min="0" max="10" @(grade.IsFinalized ? "disabled" : "") />
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm grade-input" data-field="FreelanceWork" value="@(grade.FreelanceWork)" min="0" max="10" @(grade.IsFinalized ? "disabled" : "") />
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm grade-input" data-field="MidtermScore" value="@(grade.MidtermScore)" min="0" max="30" @(grade.IsFinalized ? "disabled" : "") />
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm grade-input" data-field="LaboratoryScore" value="@(grade.LaboratoryScore)" min="0" max="10" @(grade.IsFinalized ? "disabled" : "") />
+                                        </td>
+                                        <td class="bg-light"><strong class="semester-total">@(grade.SemesterTotal ?? 0)</strong></td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm grade-input" data-field="ExamScore" value="@(grade.ExamScore)" min="0" max="50" @(grade.IsFinalized ? "disabled" : "") />
+                                        </td>
+                                        <td class="bg-light">
+                                            <strong class="grand-total @GetScoreClass(grade.GrandTotal)">
+                                                @(grade.GrandTotal ?? 0)
+                                            </strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge letter-grade @GetGradeBadgeClass(grade.LetterGrade)">
+                                                @(grade.LetterGrade ?? "—")
+                                            </span>
+                                        </td>
+                                        <td class="gpa-val">@(grade.GradePointValue?.ToString("F1") ?? "—")</td>
+                                        <td>
+                                            @if (grade.IsFinalized)
+                                            {
+                                                <span class="badge badge-success"><i class="fa fa-lock"></i> Təsdiqlənib</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-warning">Açıq</span>
+                                            }
+                                        </td>
+                                        <td class="text-right">
+                                            <a class="btn btn-sm btn-info" asp-action="CurrentSuccess"
+                                               asp-route-studentId="@grade.StudentId"
+                                               asp-route-lessonId="@grade.LessonId"
+                                               title="Cari Müvəffəqiyyət">
+                                                <i class="fa fa-bar-chart"></i>
+                                            </a>
+                                            <a class="btn btn-sm btn-primary" asp-action="Transcript"
+                                               asp-route-studentId="@grade.StudentId"
+                                               title="Transkript">
+                                                <i class="fa fa-file-text-o"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetScoreClass(int? score) => score switch
+    {
+        >= 91 => "text-success",
+        >= 71 => "text-info",
+        >= 51 => "text-warning",
+        _ => "text-danger"
+    };
+
+    string GetGradeBadgeClass(string? grade) => grade switch
+    {
+        "A" => "badge-success",
+        "B" => "badge-info",
+        "C" => "badge-warning",
+        "D" => "badge-danger",
+        "F" => "badge-dark",
+        _ => "badge-secondary"
+    };
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputs = document.querySelectorAll('.grade-input');
+            
+            inputs.forEach(input => {
+                input.addEventListener('change', async function () {
+                    const tr = this.closest('tr');
+                    const studentId = parseInt(tr.dataset.studentId);
+                    const lessonId = parseInt(tr.dataset.lessonId);
+                    
+                    const payload = {
+                        studentId: studentId,
+                        lessonId: lessonId,
+                        manualPracticalScore: parseIntOrNull(tr.querySelector('[data-field="ManualPracticalScore"]').value),
+                        freelanceWork: parseIntOrNull(tr.querySelector('[data-field="FreelanceWork"]').value),
+                        midtermScore: parseIntOrNull(tr.querySelector('[data-field="MidtermScore"]').value),
+                        laboratoryScore: parseIntOrNull(tr.querySelector('[data-field="LaboratoryScore"]').value),
+                        examScore: parseIntOrNull(tr.querySelector('[data-field="ExamScore"]').value)
+                    };
+
+                    try {
+                        const response = await fetch('/Admin/Grades/SubmitGrade', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (response.ok) {
+                            // Update UI calculations locally
+                            const attendance = parseInt(tr.querySelector('.attendance-score').innerText) || 0;
+                            const semTotal = attendance + 
+                                (payload.manualPracticalScore || 0) + 
+                                (payload.freelanceWork || 0) + 
+                                (payload.midtermScore || 0) + 
+                                (payload.laboratoryScore || 0);
+                                
+                            const grandTotal = semTotal + (payload.examScore || 0);
+                            
+                            tr.querySelector('.semester-total').innerText = semTotal;
+                            
+                            const grandTotalEl = tr.querySelector('.grand-total');
+                            grandTotalEl.innerText = grandTotal;
+                            grandTotalEl.className = 'grand-total ' + getScoreClassJS(grandTotal);
+
+                            const { letter, gpa, badgeClass } = calculateGradeScale(grandTotal);
+                            
+                            const letterEl = tr.querySelector('.letter-grade');
+                            letterEl.innerText = letter;
+                            letterEl.className = 'badge letter-grade ' + badgeClass;
+                            
+                            tr.querySelector('.gpa-val').innerText = gpa;
+
+                            this.classList.remove('is-invalid');
+                            this.classList.add('is-valid');
+                            setTimeout(() => this.classList.remove('is-valid'), 2000);
+                        } else {
+                            const error = await response.json();
+                            alert(error.message || 'Xəta baş verdi');
+                            this.classList.add('is-invalid');
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        alert('Şəbəkə xətası baş verdi.');
+                        this.classList.add('is-invalid');
+                    }
+                });
+            });
+
+            function parseIntOrNull(val) {
+                const parsed = parseInt(val, 10);
+                return isNaN(parsed) ? null : parsed;
+            }
+
+            function getScoreClassJS(score) {
+                if (score >= 91) return "text-success";
+                if (score >= 71) return "text-info";
+                if (score >= 51) return "text-warning";
+                return "text-danger";
+            }
+
+            function calculateGradeScale(score) {
+                if (!score && score !== 0) return { letter: "—", gpa: "—", badgeClass: "badge-secondary" };
+                if (score >= 91) return { letter: "A", gpa: "4.0", badgeClass: "badge-success" };
+                if (score >= 81) return { letter: "B", gpa: "3.0", badgeClass: "badge-info" };
+                if (score >= 71) return { letter: "C", gpa: "2.0", badgeClass: "badge-warning" };
+                if (score >= 61) return { letter: "D", gpa: "1.0", badgeClass: "badge-danger" };
+                if (score >= 51) return { letter: "E", gpa: "1.0", badgeClass: "badge-danger" };
+                return { letter: "F", gpa: "0.0", badgeClass: "badge-dark" };
+            }
+        });
+    </script>
+}

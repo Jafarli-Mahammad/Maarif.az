@@ -34,27 +34,6 @@ namespace Presentation.AppCode.Pipeline
                 cfg.Password.RequiredLength = 3;
             });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.Name = "MyAppAuthCookie";
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-                //options.LoginPath = "/Login";
-                //options.AccessDeniedPath = "/NotAllowed";
-                options.LoginPath = "/auth/login";
-                options.AccessDeniedPath = "/auth/accessdenied";
-                options.SlidingExpiration = true;
-            });
-
-            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            //    .AddCookie(options =>
-            //    {
-            //        //options.LoginPath = "/Login";
-            //        //options.AccessDeniedPath = "/NotAllowed";
-            //        options.LoginPath = "/auth/login";
-            //        options.AccessDeniedPath = "/auth/login";
-            //    });
-
             services.AddAuthentication(IdentityConstants.ApplicationScheme) // Use Identity's scheme name
                 .AddCookie(IdentityConstants.ApplicationScheme, options => // Explicitly name it
                 {

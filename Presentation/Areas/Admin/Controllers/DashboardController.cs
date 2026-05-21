@@ -4,9 +4,17 @@ namespace Presentation.Areas.Admin.Controllers
 {
     public class DashboardController : AdminBaseController
     {
-        public IActionResult Index()
+        private readonly MediatR.IMediator _mediator;
+
+        public DashboardController(MediatR.IMediator mediator)
         {
-            return View();
+            _mediator = mediator;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var stats = await _mediator.Send(new Application.Modules.AdminModule.Queries.DashboardStats.GetAdminDashboardStatsQuery());
+            return View(stats);
         }
     }
 }

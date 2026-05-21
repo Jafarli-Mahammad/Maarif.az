@@ -1,0 +1,192 @@
+@model Application.Modules.GradesModule.Queries.GetCurrentSuccess.CurrentSuccessResponseDto
+@{
+    ViewData["Title"] = "Cari Müvəffəqiyyət";
+}
+
+<div class="page-header">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <div class="d-inline">
+                    <h4>Cari Müvəffəqiyyət</h4>
+                    <span>@Model.SubjectName — @Model.TeacherName</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-header-breadcrumb">
+                <ul class="breadcrumb-title">
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a asp-controller="Dashboard" asp-action="Index"><i class="feather icon-home"></i></a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a asp-controller="Grades" asp-action="Index">Qiymətləndirmə</a>
+                    </li>
+                    <li class="breadcrumb-item" style="float: left;">
+                        <a href="#!">Cari Müvəffəqiyyət</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-body">
+    <!-- Score Summary Cards -->
+    <div class="row">
+        <div class="col-md-3 col-sm-6">
+            <div class="card bg-c-green text-white">
+                <div class="card-block">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <p class="m-b-5">Yekun Bal</p>
+                            <h4 class="m-b-0">@(Model.GrandTotal ?? 0) / 100</h4>
+                        </div>
+                        <div class="col col-auto text-right">
+                            <i class="feather icon-award f-50 text-c-green"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card bg-c-blue text-white">
+                <div class="card-block">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <p class="m-b-5">Dərəcə</p>
+                            <h4 class="m-b-0">@Model.LetterGrade — @Model.GradeDescription</h4>
+                        </div>
+                        <div class="col col-auto text-right">
+                            <i class="feather icon-star f-50 text-c-blue"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card bg-c-yellow text-white">
+                <div class="card-block">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <p class="m-b-5">GPA</p>
+                            <h4 class="m-b-0">@(Model.GradePoint?.ToString("F1") ?? "—")</h4>
+                        </div>
+                        <div class="col col-auto text-right">
+                            <i class="feather icon-trending-up f-50 text-c-yellow"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card bg-c-pink text-white">
+                <div class="card-block">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <p class="m-b-5">Kredit</p>
+                            <h4 class="m-b-0">@Model.Credits</h4>
+                        </div>
+                        <div class="col col-auto text-right">
+                            <i class="feather icon-book f-50 text-c-pink"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Score Breakdown -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Bal Tərkibi</h5>
+                </div>
+                <div class="card-block">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Komponent</th>
+                                    <th>Bal</th>
+                                    <th>Maks.</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ RenderScoreRow("Davamiyyət", Model.AttendanceScore, Model.AttendanceMaxScore); }
+                                @{ RenderScoreRow("Məşğələ", Model.PracticalScore ?? 0, Model.PracticalMaxScore); }
+                                @{ RenderScoreRow("Sərbəst iş", Model.FreelanceWorkScore ?? 0, Model.FreelanceWorkMaxScore); }
+                                @{ RenderScoreRow("Laboratoriya", Model.LaboratoryScore ?? 0, Model.LaboratoryMaxScore); }
+                                <tr class="table-active">
+                                    <td><strong>İmtahan qabağı yekun</strong></td>
+                                    <td><strong>@Model.PreExamTotal</strong></td>
+                                    <td><strong>@Model.PreExamMaxTotal</strong></td>
+                                    <td><strong>@(Model.PreExamMaxTotal > 0 ? (Model.PreExamTotal * 100 / Model.PreExamMaxTotal) : 0)%</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>İmtahan</td>
+                                    <td>@(Model.ExamScore ?? 0)</td>
+                                    <td>@Model.ExamMaxScore</td>
+                                    <td>@(Model.ExamMaxScore > 0 ? ((Model.ExamScore ?? 0) * 100 / Model.ExamMaxScore) : 0)%</td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td><strong>YEKUN BAL</strong></td>
+                                    <td><strong>@(Model.GrandTotal ?? 0)</strong></td>
+                                    <td><strong>100</strong></td>
+                                    <td><strong>@(Model.GrandTotal ?? 0)%</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignment Progress -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Tapşırıq İcrası</h5>
+                </div>
+                <div class="card-block">
+                    @if (Model.AssignmentProgress != null && Model.AssignmentProgress.Any())
+                    {
+                        @foreach (var cat in Model.AssignmentProgress)
+                        {
+                            var pct = cat.Total > 0 ? (cat.Completed * 100 / cat.Total) : 0;
+                            <div class="m-b-20">
+                                <p class="m-b-5">
+                                    <strong>@cat.Category</strong>
+                                    <span class="float-right">@cat.Completed / @cat.Total</span>
+                                </p>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-c-blue" style="width: @(pct)%"></div>
+                                </div>
+                                <small class="text-muted">@cat.TotalScore / @cat.MaxPossibleScore bal</small>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">Tapşırıq yoxdur.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    void RenderScoreRow(string label, int score, int max)
+    {
+        var pct = max > 0 ? (score * 100 / max) : 0;
+        <tr>
+            <td>@label</td>
+            <td>@score</td>
+            <td>@max</td>
+            <td>@pct%</td>
+        </tr>
+    }
+}

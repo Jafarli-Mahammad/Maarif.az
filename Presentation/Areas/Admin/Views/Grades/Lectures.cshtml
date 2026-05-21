@@ -1,0 +1,83 @@
+@model List<Application.Modules.LecturesModule.Queries.GetLecturesByLesson.LectureResponseDto>
+@{
+    ViewData["Title"] = "Dərs Materialları";
+}
+
+<div class="page-header">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <div class="d-inline">
+                    <h4>Dərs Materialları</h4>
+                    <span>Mühazirə, seminar və laboratoriya materialları.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-body">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="card"><div class="card-block text-center text-muted py-5"><i class="feather icon-folder f-40"></i><p class="mt-3">Bu dərs üçün material yoxdur.</p></div></div>
+    }
+    else
+    {
+        @foreach (var lecture in Model)
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h5>
+                        <span class="badge @(lecture.Type == "Mühazirə" ? "badge-primary" : lecture.Type == "Seminar" ? "badge-info" : "badge-warning")">
+                            @lecture.Type
+                        </span>
+                        Həftə @lecture.OrderIndex — @lecture.Title
+                    </h5>
+                    <span>@lecture.LectureDate.ToString("dd MMM yyyy") · @lecture.DurationMinutes dəq.</span>
+                </div>
+                <div class="card-block">
+                    @if (!string.IsNullOrEmpty(lecture.Description))
+                    {
+                        <p class="text-muted mb-3">@lecture.Description</p>
+                    }
+
+                    @if (lecture.Materials != null && lecture.Materials.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr><th>Material</th><th>Növü</th><th>Ölçü</th><th>Yükləmə</th><th></th></tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var mat in lecture.Materials)
+                                    {
+                                        <tr>
+                                            <td><i class="fa @(mat.Type == "PDF" ? "fa-file-pdf-o text-danger" : "fa-file-powerpoint-o text-warning")"></i> @mat.Title</td>
+                                            <td><span class="badge badge-secondary">@mat.Type</span></td>
+                                            <td>@FormatFileSize(mat.FileSize)</td>
+                                            <td>@mat.DownloadCount</td>
+                                            <td><a href="@mat.FilePath" class="btn btn-sm btn-primary" target="_blank"><i class="fa fa-download"></i> Yüklə</a></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Material əlavə olunmayıb.</p>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@functions {
+    string FormatFileSize(long bytes)
+    {
+        if (bytes >= 1_048_576) return $"{bytes / 1_048_576.0:F1} MB";
+        if (bytes >= 1024) return $"{bytes / 1024.0:F0} KB";
+        return $"{bytes} B";
+    }
+}

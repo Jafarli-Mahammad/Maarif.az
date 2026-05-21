@@ -79,7 +79,9 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Assignment");
+                    b.HasIndex("LessonId");
+
+                    b.ToTable("Assignments");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.AssignmentFile", b =>
@@ -126,7 +128,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AssignmentFile");
+                    b.ToTable("AssignmentFiles");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Attendance", b =>
@@ -394,6 +396,203 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("Faculties", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Models.Entities.Grade", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AttendanceScore")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ExamScore")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("FinalizedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("FreelanceWork")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("GradePointValue")
+                        .HasPrecision(3, 1)
+                        .HasColumnType("decimal(3,1)");
+
+                    b.Property<bool>("HasLaboratory")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFinalized")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int?>("LaboratoryScore")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LessonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LetterGrade")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<int?>("ManualPracticalScore")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MidtermScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("StudentId", "LessonId")
+                        .IsUnique()
+                        .HasFilter("[DeletedAt] IS NULL");
+
+                    b.ToTable("Grades", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.GradingScale", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("GradePoint")
+                        .HasPrecision(3, 1)
+                        .HasColumnType("decimal(3,1)");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LetterGrade")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<decimal>("MaxScore")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("MinScore")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LetterGrade")
+                        .IsUnique();
+
+                    b.ToTable("GradingScales", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            Description = "Əla",
+                            GradePoint = 4.0m,
+                            LetterGrade = "A",
+                            MaxScore = 100m,
+                            MinScore = 91m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            Description = "Yaxşı",
+                            GradePoint = 3.0m,
+                            LetterGrade = "B",
+                            MaxScore = 90m,
+                            MinScore = 71m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            Description = "Kafi",
+                            GradePoint = 2.0m,
+                            LetterGrade = "C",
+                            MaxScore = 70m,
+                            MinScore = 51m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            Description = "Qeyri-kafi",
+                            GradePoint = 1.0m,
+                            LetterGrade = "D",
+                            MaxScore = 50m,
+                            MinScore = 31m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            Description = "Zəif",
+                            GradePoint = 0.0m,
+                            LetterGrade = "F",
+                            MaxScore = 30m,
+                            MinScore = 0m
+                        });
+                });
+
             modelBuilder.Entity("Domain.Models.Entities.Group", b =>
                 {
                     b.Property<int>("Id")
@@ -442,6 +641,138 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("Groups", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Models.Entities.Lecture", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<int>("DurationMinutes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(90);
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LectureDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("LessonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("LessonId", "OrderIndex")
+                        .IsUnique()
+                        .HasFilter("[DeletedAt] IS NULL");
+
+                    b.ToTable("Lectures", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.LectureMaterial", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DownloadCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LectureId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LectureId");
+
+                    b.ToTable("LectureMaterials", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Models.Entities.Lesson", b =>
                 {
                     b.Property<int>("Id")
@@ -449,6 +780,10 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicYear")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -469,6 +804,9 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Semester")
                         .HasColumnType("int");
 
                     b.Property<int>("SubjectId")
@@ -795,6 +1133,46 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name", "Value");
 
                     b.ToTable("UserTokens", "Membership");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.PracticalRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LessonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PracticalRecords");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Room", b =>
@@ -1331,7 +1709,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Submission");
+                    b.ToTable("Submissions");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.SubmissionFile", b =>
@@ -1378,7 +1756,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SubmissionFile");
+                    b.ToTable("SubmissionFiles");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Teacher", b =>
@@ -1479,6 +1857,119 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("TeacherDepartments", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Models.Entities.TranscriptRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicYear")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Credits")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ExamScore")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("FinalizedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("FinalizedByTeacherId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("GradePoint")
+                        .HasPrecision(3, 1)
+                        .HasColumnType("decimal(3,1)");
+
+                    b.Property<bool>("IsPassed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsRetake")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LessonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LetterGrade")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<int>("PreExamTotal")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Semester")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubjectCategory")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SubjectName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("TotalScore")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("StudentId", "AcademicYear", "Semester");
+
+                    b.HasIndex("StudentId", "LessonId", "AcademicYear", "Semester")
+                        .IsUnique()
+                        .HasFilter("[DeletedAt] IS NULL");
+
+                    b.ToTable("TranscriptRecords", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_TranscriptRecord_GradePoint_Range", "[GradePoint] >= 0 AND [GradePoint] <= 4.0");
+
+                            t.HasCheckConstraint("CK_TranscriptRecord_Scores_NonNegative", "[PreExamTotal] >= 0 AND [TotalScore] >= 0 AND [Credits] >= 0");
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Assignment", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Lesson", null)
+                        .WithMany("Assignments")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Models.Entities.Attendance", b =>
                 {
                     b.HasOne("Domain.Models.Entities.LessonSchedule", "LessonSchedule")
@@ -1528,6 +2019,25 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Faculty");
                 });
 
+            modelBuilder.Entity("Domain.Models.Entities.Grade", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Lesson", "Lesson")
+                        .WithMany("Grades")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Entities.Student", "Student")
+                        .WithMany("Grades")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Lesson");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Domain.Models.Entities.Group", b =>
                 {
                     b.HasOne("Domain.Models.Entities.Department", "Department")
@@ -1537,6 +2047,28 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Lecture", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Lesson", "Lesson")
+                        .WithMany("Lectures")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lesson");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.LectureMaterial", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Lecture", "Lecture")
+                        .WithMany("Materials")
+                        .HasForeignKey("LectureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lecture");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Lesson", b =>
@@ -1758,6 +2290,25 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("Domain.Models.Entities.TranscriptRecord", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Lesson", "Lesson")
+                        .WithMany("TranscriptRecords")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Entities.Student", "Student")
+                        .WithMany("TranscriptRecords")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Lesson");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Domain.Models.Entities.Attendance", b =>
                 {
                     b.Navigation("AuditLogs");
@@ -1791,11 +2342,24 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("StudentGroups");
                 });
 
+            modelBuilder.Entity("Domain.Models.Entities.Lecture", b =>
+                {
+                    b.Navigation("Materials");
+                });
+
             modelBuilder.Entity("Domain.Models.Entities.Lesson", b =>
                 {
+                    b.Navigation("Assignments");
+
+                    b.Navigation("Grades");
+
+                    b.Navigation("Lectures");
+
                     b.Navigation("LessonGroups");
 
                     b.Navigation("LessonSchedules");
+
+                    b.Navigation("TranscriptRecords");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.LessonSchedule", b =>
@@ -1807,7 +2371,11 @@ namespace DataAccessLayer.Migrations
                 {
                     b.Navigation("Attendances");
 
+                    b.Navigation("Grades");
+
                     b.Navigation("StudentGroups");
+
+                    b.Navigation("TranscriptRecords");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Subject", b =>

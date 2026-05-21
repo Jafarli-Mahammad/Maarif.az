@@ -16,6 +16,7 @@ using Infrastructure.Exceptions;
 using MediatR;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace Presentation.AppCode.Seeds
 {
@@ -37,6 +38,11 @@ namespace Presentation.AppCode.Seeds
         private readonly ILessonScheduleRepository lessonScheduleRepository;
         private readonly DataContext db;
         private readonly IAttendanceRepository attendanceRepository;
+        private readonly IGradeRepository gradeRepository;
+        private readonly ILectureRepository lectureRepository;
+        private readonly ILectureMaterialRepository lectureMaterialRepository;
+        private readonly ITranscriptRecordRepository transcriptRecordRepository;
+        private readonly IGradingScaleRepository gradingScaleRepository;
 
         public DataSeeder(
             ILogger<DataSeeder> logger,
@@ -54,7 +60,12 @@ namespace Presentation.AppCode.Seeds
             ILessonRepository lessonRepository,
             ILessonScheduleRepository lessonScheduleRepository,
             DataContext db,
-            IAttendanceRepository attendanceRepository)
+            IAttendanceRepository attendanceRepository,
+            IGradeRepository gradeRepository,
+            ILectureRepository lectureRepository,
+            ILectureMaterialRepository lectureMaterialRepository,
+            ITranscriptRecordRepository transcriptRecordRepository,
+            IGradingScaleRepository gradingScaleRepository)
         {
             this.logger = logger;
             this.mediator = mediator;
@@ -72,6 +83,11 @@ namespace Presentation.AppCode.Seeds
             this.lessonScheduleRepository = lessonScheduleRepository;
             this.db = db;
             this.attendanceRepository = attendanceRepository;
+            this.gradeRepository = gradeRepository;
+            this.lectureRepository = lectureRepository;
+            this.lectureMaterialRepository = lectureMaterialRepository;
+            this.transcriptRecordRepository = transcriptRecordRepository;
+            this.gradingScaleRepository = gradingScaleRepository;
         }
 
         public async Task SeedAsync()
@@ -97,6 +113,11 @@ namespace Presentation.AppCode.Seeds
             await RunSeederStepAsync(nameof(SeedSubjectCatalogMetadataAsync), SeedSubjectCatalogMetadataAsync);
             await RunSeederStepAsync(nameof(SeedAdditionalLessonSchedulesAsync), SeedAdditionalLessonSchedulesAsync);
             await RunSeederStepAsync(nameof(SeedAttendanceSessionsAsync), SeedAttendanceSessionsAsync);
+
+            // --- Grading System Seeds ---
+            await RunSeederStepAsync(nameof(SeedLecturesAndMaterialsAsync), SeedLecturesAndMaterialsAsync);
+            await RunSeederStepAsync(nameof(SeedGradesAsync), SeedGradesAsync);
+            await RunSeederStepAsync(nameof(SeedTranscriptRecordsAsync), SeedTranscriptRecordsAsync);
         }
 
         private async Task RunSeederStepAsync(string stepName, Func<Task> step)
@@ -1164,6 +1185,297 @@ namespace Presentation.AppCode.Seeds
             catch (Exception ex)
             {
                 logger.LogWarning(ex, "Attendance seed failed.");
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        //  GRADING SYSTEM SEEDS
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Seeds 4 lectures per lesson with 2 materials each (PDF + PPTX).
+        /// </summary>
+        private async Task SeedLecturesAndMaterialsAsync()
+        {
+            if (await db.Lectures.AnyAsync().ConfigureAwait(false))
+                return;
+
+            var lessons = await db.Lessons
+                .AsNoTracking()
+                .Include(l => l.Subject)
+                .OrderBy(l => l.Id)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            var lectureTemplates = new[]
+            {
+                (Title: "Giriş və əsas anlayışlar", Type: LectureType.Mühazirə, Duration: 90),
+                (Title: "Nəzəri əsaslar",           Type: LectureType.Mühazirə, Duration: 90),
+                (Title: "Praktiki tətbiqlər",        Type: LectureType.Seminar,  Duration: 90),
+                (Title: "Laboratoriya işi №1",       Type: LectureType.Laboratoriya, Duration: 120),
+            };
+
+            var materialTemplates = new[]
+            {
+                (Suffix: "Mühazirə qeydləri",  FileName: "lecture_notes.pdf",  ContentType: "application/pdf",   MatType: MaterialType.PDF,          Size: 245_760L),
+                (Suffix: "Təqdimat",            FileName: "presentation.pptx", ContentType: "application/vnd.openxmlformats-officedocument.presentationml.presentation", MatType: MaterialType.Presentation, Size: 1_048_576L),
+            };
+
+            var baseDate = new DateTime(2026, 2, 17, 0, 0, 0, DateTimeKind.Utc); // Semester start
+
+            foreach (var lesson in lessons)
+            {
+                for (var i = 0; i < lectureTemplates.Length; i++)
+                {
+                    var tmpl = lectureTemplates[i];
+                    var lecture = new Lecture
+                    {
+                        LessonId = lesson.Id,
+                        OrderIndex = i + 1,
+                        Title = $"{tmpl.Title} — {lesson.Subject?.Name ?? "Fənn"}",
+                        Description = $"{tmpl.Title} üçün ətraflı materiallar.",
+                        LectureDate = baseDate.AddDays(i * 7),
+                        DurationMinutes = tmpl.Duration,
+                        Type = tmpl.Type,
+                    };
+
+                    await lectureRepository.AddAsync(lecture, CancellationToken.None).ConfigureAwait(false);
+                    await lectureRepository.SaveAsync(CancellationToken.None).ConfigureAwait(false);
+
+                    // Add materials for each lecture
+                    foreach (var mat in materialTemplates)
+                    {
+                        await lectureMaterialRepository.AddAsync(new LectureMaterial
+                        {
+                            LectureId = lecture.Id,
+                            Title = $"{mat.Suffix} — Həftə {i + 1}",
+                            FileName = $"week{i + 1}_{mat.FileName}",
+                            FilePath = $"/uploads/lectures/{lesson.Id}/week{i + 1}_{mat.FileName}",
+                            ContentType = mat.ContentType,
+                            FileSize = mat.Size,
+                            Type = mat.MatType,
+                            DownloadCount = 0
+                        }, CancellationToken.None).ConfigureAwait(false);
+                    }
+
+                    await lectureMaterialRepository.SaveAsync(CancellationToken.None).ConfigureAwait(false);
+                }
+            }
+
+            logger.LogInformation(
+                "Lecture seed completed: {LessonCount} lessons × {LectureCount} lectures each.",
+                lessons.Count,
+                lectureTemplates.Length);
+        }
+
+        /// <summary>
+        /// Seeds realistic grade data for every enrolled student in every lesson.
+        /// Uses deterministic pseudo-random scores based on student/lesson IDs for reproducibility.
+        /// </summary>
+        private async Task SeedGradesAsync()
+        {
+            if (await db.Grades.AnyAsync().ConfigureAwait(false))
+                return;
+
+            var lessons = await db.Lessons
+                .AsNoTracking()
+                .Include(l => l.Subject)
+                .Include(l => l.LessonGroups)
+                .OrderBy(l => l.Id)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            var gradingScales = await db.GradingScales
+                .AsNoTracking()
+                .OrderByDescending(gs => gs.MinScore)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            var toAdd = new List<Grade>();
+
+            foreach (var lesson in lessons)
+            {
+                var groupIds = lesson.LessonGroups.Select(lg => lg.GroupId).ToList();
+                if (groupIds.Count == 0)
+                    continue;
+
+                var studentIds = await db.StudentGroups
+                    .AsNoTracking()
+                    .Where(sg => groupIds.Contains(sg.GroupId))
+                    .Select(sg => sg.StudentId)
+                    .Distinct()
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                var subject = lesson.Subject;
+                var maxPreExam = (subject?.FreeWorkScore ?? 10)
+                               + (subject?.SeminarScore ?? 10)
+                               + (subject?.LabScore ?? 10)
+                               + (subject?.AttendanceScore ?? 10);
+
+                foreach (var studentId in studentIds)
+                {
+                    // Deterministic seed for reproducibility
+                    var seed = (studentId * 31 + lesson.Id * 17) % 100;
+
+                    // Generate realistic scores
+                    var attendance = Math.Min(seed % 11 + 4, subject?.AttendanceScore ?? 10);       // 4-10
+                    var practical = Math.Min((seed * 3) % 11 + 5, subject?.SeminarScore ?? 10);     // 5-10
+                    var freelance = Math.Min((seed * 7) % 11 + 4, subject?.FreeWorkScore ?? 10);    // 4-10
+                    var labScore = lesson.HasLaboratory ? Math.Min((seed * 5) % 11 + 4, subject?.LabScore ?? 10) : (int?)null;
+                    var midterm = (seed * 11) % 6 + 5;                                              // 5-10
+                    var exam = (seed * 13) % 21 + 30;                                                // 30-50
+
+                    var semTotal = attendance + practical + midterm + (labScore ?? 0);
+                    var grandTotal = semTotal + exam;
+
+                    // Look up letter grade
+                    var scale = gradingScales.FirstOrDefault(gs =>
+                        grandTotal >= gs.MinScore && grandTotal <= gs.MaxScore);
+
+                    toAdd.Add(new Grade
+                    {
+                        StudentId = studentId,
+                        LessonId = lesson.Id,
+                        HasLaboratory = lesson.HasLaboratory,
+                        AttendanceScore = attendance,
+                        ManualPracticalScore = practical,
+                        FreelanceWork = freelance,
+                        MidtermScore = midterm,
+                        LaboratoryScore = labScore,
+                        ExamScore = exam,
+                        LetterGrade = scale?.LetterGrade,
+                        GradePointValue = scale?.GradePoint,
+                        IsFinalized = false
+                    });
+                }
+            }
+
+            if (toAdd.Count == 0)
+                return;
+
+            foreach (var grade in toAdd)
+                await gradeRepository.AddAsync(grade, CancellationToken.None).ConfigureAwait(false);
+
+            try
+            {
+                await gradeRepository.SaveAsync(CancellationToken.None).ConfigureAwait(false);
+                logger.LogInformation("Grade seed completed: {Count} grade records.", toAdd.Count);
+            }
+            catch (Exception ex) when (IsSqlUniqueOrDuplicateKey(ex))
+            {
+                logger.LogInformation(ex, "Grade seed skipped (duplicate keys).");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Grade seed failed.");
+            }
+        }
+
+        /// <summary>
+        /// Seeds transcript records for a previous semester (2025 Payız) to populate
+        /// the transcript view with historical data, plus current semester placeholders.
+        /// </summary>
+        private async Task SeedTranscriptRecordsAsync()
+        {
+            if (await db.TranscriptRecords.AnyAsync().ConfigureAwait(false))
+                return;
+
+            var gradingScales = await db.GradingScales
+                .AsNoTracking()
+                .OrderByDescending(gs => gs.MinScore)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            var students = await db.Students
+                .AsNoTracking()
+                .Where(s => s.DepartmentId != null)
+                .OrderBy(s => s.Id)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            // Historical subjects for the previous semester
+            var historicalSubjects = new[]
+            {
+                (Name: "Azərbaycan dilində işgüzar və akademik kommunikasiya", Credits: 4),
+                (Name: "Xətti cəbr və analitik həndəsə",                      Credits: 3),
+                (Name: "İnformasiya texnologiyalarının əsasları",              Credits: 8),
+                (Name: "Xarici dildə işgüzar və akademik kommunikasiya-1 (İngilis)", Credits: 4),
+                (Name: "Proqramlaşdırmanın əsasları",                          Credits: 6),
+                (Name: "Fizika",                                               Credits: 5),
+            };
+
+            var toAdd = new List<TranscriptRecord>();
+
+            foreach (var student in students)
+            {
+                var baseSeed = student.Id * 37;
+
+                // --- Previous Semester: 2025 Payız ---
+                for (var i = 0; i < historicalSubjects.Length; i++)
+                {
+                    var sub = historicalSubjects[i];
+                    var seed = (baseSeed + i * 13) % 100;
+
+                    // Generate high scores for previous semester (students mostly passed)
+                    var preExam = 35 + seed % 16;       // 35-50
+                    var examScore = 40 + seed % 11;      // 40-50
+                    var total = preExam + examScore;
+
+                    var scale = gradingScales.FirstOrDefault(gs =>
+                        total >= gs.MinScore && total <= gs.MaxScore);
+
+                    toAdd.Add(new TranscriptRecord
+                    {
+                        StudentId = student.Id,
+                        LessonId = 0, // Will be set below or kept as 0 for historical
+                        AcademicYear = "2025-2026",
+                        Semester = SemesterType.Payız,
+                        SubjectName = sub.Name,
+                        SubjectCategory = SubjectCategory.Məcburi,
+                        Credits = sub.Credits,
+                        PreExamTotal = preExam,
+                        ExamScore = examScore,
+                        TotalScore = total,
+                        LetterGrade = scale?.LetterGrade ?? "A",
+                        GradePoint = scale?.GradePoint ?? 4.0m,
+                        IsRetake = false,
+                        IsPassed = total >= 51,
+                        FinalizedAt = new DateTime(2026, 1, 20, 0, 0, 0, DateTimeKind.Utc)
+                    });
+                }
+            }
+
+            if (toAdd.Count == 0)
+                return;
+
+            // We need a valid LessonId. Use the first available lesson as a reference.
+            var firstLesson = await db.Lessons.OrderBy(l => l.Id).FirstOrDefaultAsync().ConfigureAwait(false);
+            var defaultLessonId = firstLesson?.Id ?? 1;
+            foreach (var record in toAdd)
+            {
+                if (record.LessonId == 0)
+                    record.LessonId = defaultLessonId;
+            }
+
+            foreach (var record in toAdd)
+                await transcriptRecordRepository.AddAsync(record, CancellationToken.None).ConfigureAwait(false);
+
+            try
+            {
+                await transcriptRecordRepository.SaveAsync(CancellationToken.None).ConfigureAwait(false);
+                logger.LogInformation(
+                    "Transcript seed completed: {Count} records for {StudentCount} students.",
+                    toAdd.Count,
+                    students.Count);
+            }
+            catch (Exception ex) when (IsSqlUniqueOrDuplicateKey(ex))
+            {
+                logger.LogInformation(ex, "Transcript seed skipped (duplicate keys).");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Transcript seed failed.");
             }
         }
     }

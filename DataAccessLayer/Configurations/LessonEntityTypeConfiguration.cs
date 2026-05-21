@@ -15,6 +15,14 @@ namespace DataAccessLayer.Configurations
 
             builder.HasQueryFilter(l => l.DeletedAt == null);
 
+            // --- Academic Term ---
+            builder.Property(l => l.AcademicYear)
+                   .HasMaxLength(20);
+
+            builder.Property(l => l.Semester)
+                   .HasConversion<int>();
+
+            // --- Relationships ---
             builder.HasOne(l => l.Teacher)
                    .WithMany(t => t.Lessons)
                    .HasForeignKey(l => l.TeacherId)
@@ -30,4 +38,4 @@ namespace DataAccessLayer.Configurations
             builder.HasIndex(l => l.SubjectId);
         }
     }
-}
+}

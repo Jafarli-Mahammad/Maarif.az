@@ -3203,11 +3203,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\source\\repos\\Maarif\\Repository\\Repository.csproj",
+      "projectUniqueName": "C:\\Users\\user\\source\\repos\\maarif\\Repository\\Repository.csproj",
       "projectName": "Repository",
-      "projectPath": "C:\\Users\\user\\source\\repos\\Maarif\\Repository\\Repository.csproj",
+      "projectPath": "C:\\Users\\user\\source\\repos\\maarif\\Repository\\Repository.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\source\\repos\\Maarif\\Repository\\obj\\",
+      "outputPath": "C:\\Users\\user\\source\\repos\\maarif\\Repository\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

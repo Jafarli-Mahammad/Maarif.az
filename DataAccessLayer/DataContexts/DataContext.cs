@@ -1,4 +1,4 @@
-﻿using Domain.Models.Abstract;
+using Domain.Models.Abstract;
 using Domain.Models.Entities;
 using Domain.Models.Entities.Membership;
 using Infrastructure.Abstracts;
@@ -27,6 +27,29 @@ namespace DataAccessLayer.Migrations
         public DbSet<TeacherDepartment> TeacherDepartments { get; set; }
         public DbSet<Building> Buildings { get; set; }
         public DbSet<Room> Rooms { get; set; }
+
+        // --- Assignments & Submissions ---
+        public DbSet<Assignment> Assignments { get; set; }
+        public DbSet<AssignmentFile> AssignmentFiles { get; set; }
+        public DbSet<Submission> Submissions { get; set; }
+        public DbSet<SubmissionFile> SubmissionFiles { get; set; }
+
+        // --- Subject Details ---
+        public DbSet<SubjectMaterial> SubjectMaterials { get; set; }
+        public DbSet<SubjectLiterature> SubjectLiteratures { get; set; }
+        public DbSet<SubjectTopic> SubjectTopics { get; set; }
+
+        // --- Grading System ---
+        public DbSet<Grade> Grades { get; set; }
+        public DbSet<GradingScale> GradingScales { get; set; }
+        public DbSet<PracticalRecord> PracticalRecords { get; set; }
+
+        // --- Lectures & Materials ---
+        public DbSet<Lecture> Lectures { get; set; }
+        public DbSet<LectureMaterial> LectureMaterials { get; set; }
+
+        // --- Transcripts ---
+        public DbSet<TranscriptRecord> TranscriptRecords { get; set; }
 
 
         public DataContext(DbContextOptions<DataContext> options, IIdentityService? identityService = null)

@@ -1,0 +1,60 @@
+@model Application.Modules.TranscriptsModule.Queries.GetStudentTranscript.StudentTranscriptResponseDto
+@{
+    ViewData["Title"] = "Transkript";
+}
+
+<div class="page-header">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <div class="d-inline">
+                    <h4>Akademik Transkript</h4>
+                    <span>@Model.StudentFullName — @Model.StudentNumber</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-body">
+    <div class="row">
+        <div class="col-md-3"><div class="card text-center"><div class="card-block"><h2 class="text-c-blue">@Model.CumulativeGPA.ToString("F1")</h2><p>Ümumi GPA</p></div></div></div>
+        <div class="col-md-3"><div class="card text-center"><div class="card-block"><h2 class="text-c-green">@Model.EarnedCredits</h2><p>Qazanılan Kredit</p></div></div></div>
+        <div class="col-md-3"><div class="card text-center"><div class="card-block"><h2>@Model.TotalCredits</h2><p>Ümumi Kredit</p></div></div></div>
+        <div class="col-md-3"><div class="card text-center"><div class="card-block"><h2>@Model.TotalSubjects</h2><p>Fənn Sayı</p></div></div></div>
+    </div>
+
+    @foreach (var semester in Model.Semesters)
+    {
+        <div class="card">
+            <div class="card-header">
+                <h5>@semester.DisplayLabel <span class="badge badge-primary float-right">GPA: @semester.SemesterGPA.ToString("F1")</span></h5>
+                <span>@semester.SubjectCount fənn · @semester.TotalCredits kredit · @semester.EarnedCredits qazanılan</span>
+            </div>
+            <div class="card-block table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-light">
+                        <tr><th>№</th><th>Kateqoriya</th><th>Fənn</th><th>Kredit</th><th>İmt.q.</th><th>İmtahan</th><th>Yekun</th><th>Dərəcə</th><th>Təkrar</th></tr>
+                    </thead>
+                    <tbody>
+                        @{ var idx = 1; }
+                        @foreach (var r in semester.Records)
+                        {
+                            <tr class="@(r.LetterGrade == "F" ? "table-danger" : "")">
+                                <td>@(idx++)</td>
+                                <td><span class="badge @(r.SubjectCategory == "Məcburi" ? "badge-primary" : "badge-info")">@r.SubjectCategory</span></td>
+                                <td>@r.SubjectName</td>
+                                <td class="text-center">@r.Credits</td>
+                                <td class="text-center">@r.PreExamTotal</td>
+                                <td class="text-center">@(r.ExamScore?.ToString() ?? "—")</td>
+                                <td class="text-center"><strong>@r.TotalScore</strong></td>
+                                <td class="text-center"><span class="badge @(r.LetterGrade == "A" ? "badge-success" : r.LetterGrade == "B" ? "badge-info" : r.LetterGrade == "C" ? "badge-warning" : "badge-danger")">@r.LetterGrade</span></td>
+                                <td class="text-center">@(r.IsRetake ? "Təkrar" : "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

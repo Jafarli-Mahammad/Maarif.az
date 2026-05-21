@@ -325,7 +325,25 @@
         </div>
 
         <div id="sw-pane-grades" class="sw-pane">
-            <p class="sw-muted">Qiymətləndirmə üzrə əlavə funksionallıq tezliklə əlavə olunacaq. Ağırlıqlar “Dərs haqqında” bölməsində göstərilir.</p>
+            @if (Model.IsTeacher && s.Lessons.Any())
+            {
+                <div style="margin-bottom: 24px;">
+                    <h5 style="font-weight: 700; margin-bottom: 12px;">Qiymətləndirmə Cədvəlləri</h5>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 16px;">Tələbələrin ballarını daxil etmək üçün müvafiq dərsin cədvəlinə keçid edin.</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        @foreach (var lesson in s.Lessons)
+                        {
+                            <a asp-controller="TeacherPortal" asp-action="GradingTable" asp-route-lessonId="@lesson.Id" asp-route-subjectId="@s.Id" 
+                               class="btn btn-primary" style="border-radius: 8px; font-weight: 600;">
+                                <i class="ph ph-table me-2"></i> Dərs (ID: @lesson.Id) - @lesson.TeacherFullName
+                            </a>
+                        }
+                    </div>
+                </div>
+                <hr style="margin: 24px 0; border-color: var(--border);" />
+            }
+            
+            <h5 style="font-weight: 700; margin-bottom: 16px;">Qiymətləndirmə Ağırlıqları</h5>
             <div class="sw-grades" style="max-width: 640px;">
                 <div class="sw-grade"><div class="g-label">Sərbəst iş balı</div><div class="g-val">@s.FreeWorkScore</div></div>
                 <div class="sw-grade"><div class="g-label">Məşğələ balı</div><div class="g-val">@s.SeminarScore</div></div>
