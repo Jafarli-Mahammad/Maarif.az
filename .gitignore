@@ -1,2 +1,13 @@
 appsettings.json
 appsettings.Development.json
+
+# Exclude build outputs
+bin/
+obj/
+
+# Exclude dependencies
+node_modules/
+
+# Exclude local VS settings
+.vs/
+*.user
