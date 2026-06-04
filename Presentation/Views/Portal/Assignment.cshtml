@@ -1,0 +1,145 @@
+@model Application.Modules.AssignmentsModule.Queries.GetAssignmentsByLesson.AssignmentDto
+@{
+    Layout = "~/Views/Shared/_AcademicPortalLayout.cshtml";
+    ViewData["Title"] = Model.Title;
+    var subjectId = (int)ViewBag.SubjectId;
+    bool isClosed = DateTime.UtcNow > Model.DueDate;
+}
+
+<style>
+    .detail-card { border-radius: 24px; border: 1px solid rgba(0,0,0,0.03) !important; box-shadow: 0 12px 36px rgba(0,0,0,.04); background: #fff; overflow: hidden; }
+    .detail-header { background: linear-gradient(145deg, #fff 0%, #f8f9fa 100%); padding: 2rem 2.5rem; border-bottom: 1px solid rgba(0,0,0,.04); }
+    .detail-body { padding: 2rem 2.5rem; }
+    .detail-grid { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; }
+    .meta-panel { background: #f8f9fa; border-radius: 16px; padding: 1.5rem; }
+    .meta-row { display: flex; justify-content: space-between; padding: .65rem 0; border-bottom: 1px solid #f1f3f5; }
+    .meta-row:last-child { border-bottom: none; }
+    .meta-label { color: #868e96; font-weight: 600; font-size: .82rem; text-transform: uppercase; letter-spacing: .5px; }
+    .meta-value { color: #212529; font-weight: 700; font-size: .9rem; text-align: right; }
+    .content-panel { }
+    .content-panel h3 { font-size: 1.1rem; font-weight: 800; color: #212529; margin-bottom: 1rem; }
+    .desc-text { font-size: .95rem; line-height: 1.7; color: #495057; }
+    .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: .5em 1em; border-radius: 10px; font-size: .8rem; font-weight: 700; }
+    .badge-open { background: #d3f9d8; color: #2b8a3e; }
+    .badge-closed { background: #ffe3e3; color: #c92a2a; }
+    .upload-area { border: 2px dashed #dee2e6; border-radius: 16px; padding: 2rem; text-align: center; transition: all .2s; }
+    .upload-area:hover { border-color: #339af0; background: #f0f7ff; }
+    .btn-submit { background: linear-gradient(135deg, #339af0, #228be6); color: #fff; border: none; padding: .75rem 2rem; border-radius: 12px; font-weight: 700; font-size: .95rem; transition: all .2s; }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(51,154,240,.3); color: #fff; }
+    .lock-msg { background: #f1f3f5; border-radius: 16px; padding: 2rem; text-align: center; color: #868e96; }
+    .lock-msg i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+    .btn-back { background: #fff; border: 1px solid #dee2e6; color: #495057; font-weight: 600; padding: .6rem 1.2rem; border-radius: 12px; transition: all .2s; }
+    .btn-back:hover { background: #f8f9fa; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.06); color: #212529; }
+</style>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 12px; font-weight: 600;">
+        <i class="ph ph-check-circle me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 12px; font-weight: 600;">
+        <i class="ph ph-warning me-2"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card mb-4 detail-card">
+    <div class="detail-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h4 class="mb-1" style="font-weight: 800; color: #212529; font-size: 1.4rem;">@Model.Title</h4>
+            <span style="color: #868e96; font-weight: 600; font-size: .9rem;">Bilinmir</span>
+        </div>
+        <a asp-action="Assignments" asp-route-subjectId="@subjectId" class="btn btn-back text-decoration-none">
+            <i class="ph ph-arrow-left me-2"></i> Tapşırıqlara qayıt
+        </a>
+    </div>
+
+    <div class="detail-body">
+        <div class="detail-grid">
+            <div class="meta-panel">
+                <div class="meta-row">
+                    <span class="meta-label">Müəllim</span>
+                    <span class="meta-value">—</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Təhvil verən</span>
+                    <span class="meta-value">— / —</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Başlanğıc</span>
+                    <span class="meta-value">—</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Son tarix</span>
+                    <span class="meta-value">@Model.DueDate.ToString("dd.MM.yyyy HH:mm")</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Maks. bal</span>
+                    <span class="meta-value">—</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">Vəziyyət</span>
+                    <span class="meta-value">
+                        @if (isClosed)
+                        {
+                            <span class="status-badge badge-closed"><i class="ph ph-lock-simple"></i> Bağlı</span>
+                        }
+                        else
+                        {
+                            <span class="status-badge badge-open"><i class="ph ph-lock-open"></i> Açıq</span>
+                        }
+                    </span>
+                </div>
+            </div>
+
+            <div class="content-panel">
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    <h3>Təsvir</h3>
+                    <p class="desc-text">@Model.Description</p>
+                }
+
+                <h3 style="margin-top: 2rem;">Sizin cavabınız</h3>
+                
+                @if (isClosed)
+                {
+                    <div class="lock-msg">
+                        <i class="ph ph-lock-key"></i>
+                        <p style="font-weight: 700;">Bu tapşırığın son tarixi keçib.</p>
+                        <p style="font-size: .85rem;">İşin statusu bağlı olduğu üçün fayl yerləşdirmək mümkün deyil.</p>
+                    </div>
+                }
+                else
+                {
+                    <form asp-action="SubmitAssignment" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="AssignmentId" value="@Model.Id" />
+                        <input type="hidden" name="subjectId" value="@subjectId" />
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Qeyd (istəyə bağlı)</label>
+                            <textarea name="Note" class="form-control" rows="3" style="border-radius: 12px;" placeholder="Cavabınız haqqında qeyd yazın..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Keçid (istəyə bağlı)</label>
+                            <input type="url" name="LinkUrl" class="form-control" style="border-radius: 12px;" placeholder="https://github.com/..." />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Fayllar</label>
+                            <div class="upload-area">
+                                <i class="ph ph-cloud-arrow-up" style="font-size: 2.5rem; color: #339af0; margin-bottom: 8px; display: block;"></i>
+                                <p style="font-weight: 600; color: #495057; margin-bottom: 8px;">Faylları yükləmək üçün klikləyin</p>
+                                <input type="file" name="Files" multiple class="form-control" style="border: none; text-align: center;" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-submit">
+                            <i class="ph ph-paper-plane-tilt me-2"></i> Göndər
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>

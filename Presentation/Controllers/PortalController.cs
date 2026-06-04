@@ -1,6 +1,7 @@
 using Application.Modules.StudentsModule.Queries.GetStudentPortalProfileQuery;
 using Application.Modules.StudentsModule.Queries.GetStudentScheduleQuery;
 using Application.Modules.SubjectsModule.Queries.PortalSubjectQuery;
+using Application.Repositories;
 using Infrastructure.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -15,10 +16,12 @@ namespace Presentation.Controllers
     public class PortalController : Controller
     {
         private readonly IMediator mediator;
+        private readonly IStudentRepository studentRepository;
 
-        public PortalController(IMediator mediator)
+        public PortalController(IMediator mediator, IStudentRepository studentRepository)
         {
             this.mediator = mediator;
+            this.studentRepository = studentRepository;
         }
 
         [HttpGet]
@@ -119,6 +122,94 @@ namespace Presentation.Controllers
             catch (NotFoundException)
             {
                 return NotFound();
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Assignments(int subjectId, CancellationToken cancellationToken)
+        {
+            var userId = User.GetRequiredUserId();
+            var profile = await mediator.Send(
+                new GetStudentPortalProfileRequest { UserId = userId },
+                cancellationToken);
+
+            if (profile is null)
+                return RedirectToAction(nameof(AuthController.Login), "Auth");
+
+            PopulateStudentSubjectViewBag(profile, "Tapşırıqlar", "Tapşırıqlar");
+            ViewBag.SubjectId = subjectId;
+
+            var workspace = await mediator.Send(new GetPortalSubjectWorkspaceRequest { UserId = userId, SubjectId = subjectId, ForTeacher = false }, cancellationToken);
+
+            var assignments = new List<Application.Modules.AssignmentsModule.Queries.GetAssignmentsByLesson.AssignmentDto>();
+            if (workspace?.Subject?.Lessons != null)
+            {
+                foreach (var lesson in workspace.Subject.Lessons)
+                {
+                    var lessonAssignments = await mediator.Send(new Application.Modules.AssignmentsModule.Queries.GetAssignmentsByLesson.GetAssignmentsByLessonQuery { LessonId = lesson.Id }, cancellationToken);
+                    assignments.AddRange(lessonAssignments);
+                }
+            }
+
+            return View(assignments.DistinctBy(a => a.Id).ToList());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Assignment(int id, int subjectId, CancellationToken cancellationToken)
+        {
+            var userId = User.GetRequiredUserId();
+            var profile = await mediator.Send(
+                new GetStudentPortalProfileRequest { UserId = userId },
+                cancellationToken);
+
+            if (profile is null)
+                return RedirectToAction(nameof(AuthController.Login), "Auth");
+
+            // Fetch assignments to find the one we want
+            var workspace = await mediator.Send(new GetPortalSubjectWorkspaceRequest { UserId = userId, SubjectId = subjectId, ForTeacher = false }, cancellationToken);
+            
+            Application.Modules.AssignmentsModule.Queries.GetAssignmentsByLesson.AssignmentDto assignment = null;
+            if (workspace?.Subject?.Lessons != null)
+            {
+                foreach (var lesson in workspace.Subject.Lessons)
+                {
+                    var lessonAssignments = await mediator.Send(new Application.Modules.AssignmentsModule.Queries.GetAssignmentsByLesson.GetAssignmentsByLessonQuery { LessonId = lesson.Id }, cancellationToken);
+                    assignment = lessonAssignments.FirstOrDefault(a => a.Id == id);
+                    if (assignment != null) break;
+                }
+            }
+
+            if (assignment == null)
+                return NotFound();
+
+            PopulateStudentSubjectViewBag(profile, assignment.Title, "Tapşırıq");
+            ViewBag.SubjectId = subjectId;
+            ViewBag.Workspace = workspace;
+
+            return View(assignment);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitAssignment(Application.Modules.SubmissionsModule.Commands.SubmitAssignment.SubmitAssignmentCommand command, int subjectId, CancellationToken cancellationToken)
+        {
+            var userId = User.GetRequiredUserId();
+            var student = await studentRepository.GetByUserIdWithDetailsAsync(userId, cancellationToken);
+            if (student == null)
+            {
+                return NotFound("Tələbə tapılmadı.");
+            }
+            command.StudentId = student.Id;
+
+            try
+            {
+                await mediator.Send(command, cancellationToken);
+                TempData["SuccessMessage"] = "Tapşırıq uğurla göndərildi.";
+                return RedirectToAction(nameof(Assignment), new { id = command.AssignmentId, subjectId = subjectId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction(nameof(Assignment), new { id = command.AssignmentId, subjectId = subjectId });
             }
         }
 

@@ -1,0 +1,96 @@
+@model List<Application.Modules.AssignmentsModule.Queries.GetAssignmentsByLesson.AssignmentDto>
+@{
+    Layout = "~/Views/Shared/_AcademicPortalLayout.cshtml";
+    ViewData["Title"] = "Tapşırıqlar";
+    var subjectId = (int)ViewBag.SubjectId;
+}
+
+<style>
+    .asgn-card { border-radius: 24px; border: 1px solid rgba(0,0,0,0.03) !important; box-shadow: 0 12px 36px rgba(0,0,0,0.04); background: #fff; overflow: hidden; }
+    .asgn-header { background: linear-gradient(145deg, #fff 0%, #f8f9fa 100%); padding: 2rem 2.5rem; border-bottom: 1px solid rgba(0,0,0,0.04); }
+    .asgn-table { margin-bottom: 0; }
+    .asgn-table thead th { background: #fdfdfe; color: #868e96; font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .8px; border-bottom: 2px solid #f1f3f5; padding: 1.25rem 1rem; border-top: none; }
+    .asgn-table tbody td { padding: 1rem; border-bottom: 1px solid #f8f9fa; color: #495057; font-weight: 500; transition: background-color .2s ease; vertical-align: middle; }
+    .asgn-table tbody tr:hover td { background-color: #f8f9fc; }
+    .type-badge { display: inline-block; padding: .45em .85em; border-radius: 8px; font-size: .72rem; font-weight: 700; letter-spacing: .3px; }
+    .type-other { background: #f1f3f5; color: #495057; }
+    .status-chip { display: inline-flex; align-items: center; gap: 6px; padding: .45em .85em; border-radius: 8px; font-size: .75rem; font-weight: 700; }
+    .status-pending { background: #fff3bf; color: #e67700; }
+    .status-closed { background: #f1f3f5; color: #868e96; }
+    .score-display { font-weight: 800; font-size: .95rem; }
+    .btn-back { background: #fff; border: 1px solid #dee2e6; color: #495057; font-weight: 600; padding: .6rem 1.2rem; border-radius: 12px; transition: all .2s; box-shadow: 0 2px 8px rgba(0,0,0,.02); }
+    .btn-back:hover { background: #f8f9fa; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.06); color: #212529; }
+    .asgn-link { color: #212529; text-decoration: none; font-weight: 700; }
+    .asgn-link:hover { color: #339af0; }
+</style>
+
+<div class="card mb-4 asgn-card">
+    <div class="asgn-header d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-1" style="font-weight: 800; color: #212529; font-size: 1.5rem;">Tapşırıqlar</h4>
+            <p class="text-muted mb-0" style="font-size: .95rem; font-weight: 500;">Bu fənn üçün bütün tapşırıqların siyahısı.</p>
+        </div>
+        <a asp-action="Subject" asp-route-id="@subjectId" class="btn btn-back text-decoration-none">
+            <i class="ph ph-arrow-left me-2"></i> Fənnə qayıt
+        </a>
+    </div>
+
+    <div class="card-body p-0">
+        @if (Model.Count == 0)
+        {
+            <div style="text-align: center; padding: 60px 20px; color: #adb5bd;">
+                <i class="ph ph-clipboard-text" style="font-size: 3.5rem; margin-bottom: 16px; display: block;"></i>
+                <p style="font-weight: 600; font-size: 1rem;">Bu fənn üçün tapşırıq tapılmadı.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table asgn-table">
+                    <thead>
+                        <tr>
+                            <th class="ps-4" style="width: 50px;">№</th>
+                            <th>Tip</th>
+                            <th>Tapşırıq</th>
+                            <th>Müəllim</th>
+                            <th class="text-center">Başlanğıc</th>
+                            <th class="text-center">Son tarix</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Bal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int i = 1; }
+                        @foreach (var item in Model)
+                        {
+                            bool isClosed = DateTime.UtcNow > item.DueDate;
+                            <tr>
+                                <td class="ps-4 text-muted fw-bold">@(i++)</td>
+                                <td><span class="type-badge type-other">Bilinmir</span></td>
+                                <td>
+                                    <a asp-action="Assignment" asp-route-id="@item.Id" asp-route-subjectId="@subjectId" class="asgn-link">@item.Title</a>
+                                </td>
+                                <td style="color: #868e96; font-weight: 600;">—</td>
+                                <td class="text-center" style="white-space: nowrap;">—</td>
+                                <td class="text-center" style="white-space: nowrap;">@item.DueDate.ToString("dd.MM.yyyy")</td>
+                                <td class="text-center">
+                                    @if (isClosed)
+                                    {
+                                        <span class="status-chip status-closed"><i class="ph ph-lock-simple"></i> Bağlı</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-chip status-pending"><i class="ph ph-clock"></i> Gözləyir</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <span style="color: #ced4da; font-weight: 600;">—</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

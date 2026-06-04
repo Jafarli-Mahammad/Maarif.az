@@ -2,32 +2,30 @@
   "profiles": {
     "MaarifKestrel": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "auth/login",
+      "launchBrowser": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ConnectionStrings__cString": "Server=.\\SQLEXPRESS;Database=Maarif;User Id=sa;Password=query;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=True"
+        "ConnectionStrings__cString": "Server=localhost;Database=Maarif;User Id=sa;Password=query;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=True"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://127.0.0.1:5102"
+      "applicationUrl": "http://localhost:5102"
     },
     "MaarifHttps": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "auth/login",
+      "launchBrowser": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ConnectionStrings__cString": "Server=.\\SQLEXPRESS;Database=Maarif;User Id=sa;Password=query;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=True"
+        "ConnectionStrings__cString": "Server=localhost;Database=Maarif;User Id=sa;Password=query;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=True"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7146;http://127.0.0.1:5102"
+      "applicationUrl": "https://localhost:7146;http://localhost:5102"
     },
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ConnectionStrings__cString": "Server=.\\SQLEXPRESS;Database=Maarif;User Id=sa;Password=query;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=True"
+        "ConnectionStrings__cString": "Server=localhost;Database=Maarif;User Id=sa;Password=query;TrustServerCertificate=True;Encrypt=True;MultipleActiveResultSets=True"
       }
     },
     "Container (Dockerfile)": {

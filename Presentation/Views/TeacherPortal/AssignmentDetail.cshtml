@@ -1,0 +1,168 @@
+@model Application.Modules.AssignmentsModule.Queries.GetAssignmentsByLesson.AssignmentDto
+@{
+    Layout = "~/Views/Shared/_AcademicPortalLayout.cshtml";
+    ViewData["Title"] = Model.Title;
+    var subjectId = (int)ViewBag.SubjectId;
+    var lessonId = (int)ViewBag.LessonId;
+    bool isClosed = DateTime.UtcNow > Model.DueDate;
+    
+    var submissions = ViewBag.Submissions as List<Application.Modules.SubmissionsModule.Queries.GetSubmissionsByAssignment.SubmissionDto>;
+}
+
+<style>
+    .grade-card { border-radius: 24px; border: 1px solid rgba(0,0,0,0.03) !important; box-shadow: 0 12px 36px rgba(0,0,0,0.04); background: #fff; overflow: hidden; }
+    .grade-header { background: linear-gradient(145deg, #fff 0%, #f8f9fa 100%); padding: 2rem 2.5rem; border-bottom: 1px solid rgba(0,0,0,.04); }
+    .grade-body { padding: 0; }
+    .info-strip { display: flex; flex-wrap: wrap; gap: 1.5rem; padding: 1.25rem 2.5rem; background: #f8f9fa; border-bottom: 1px solid rgba(0,0,0,.04); }
+    .info-chip { display: flex; align-items: center; gap: 8px; font-size: .82rem; font-weight: 600; color: #495057; }
+    .info-chip i { color: #339af0; font-size: 1rem; }
+    .grade-table { margin-bottom: 0; }
+    .grade-table thead th { background: #fdfdfe; color: #868e96; font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .8px; border-bottom: 2px solid #f1f3f5; padding: 1.15rem 1rem; border-top: none; }
+    .grade-table tbody td { padding: .85rem 1rem; border-bottom: 1px solid #f8f9fa; color: #495057; font-weight: 500; vertical-align: middle; }
+    .grade-table tbody tr:hover td { background-color: #f8f9fc; }
+    .student-name { font-weight: 700; color: #212529; }
+    .student-num { color: #adb5bd; font-size: .78rem; font-weight: 600; }
+    .sub-status { display: inline-flex; align-items: center; gap: 5px; font-size: .75rem; font-weight: 700; padding: .35em .7em; border-radius: 7px; }
+    .sub-yes { background: #d3f9d8; color: #2b8a3e; }
+    .sub-no { background: #fff3bf; color: #e67700; }
+    .score-input { width: 80px; height: 40px; border: 2px solid #e9ecef; border-radius: 10px; text-align: center; font-weight: 700; font-size: .95rem; color: #212529; transition: border-color .2s, box-shadow .2s; }
+    .score-input:focus { border-color: #339af0; box-shadow: 0 0 0 3px rgba(51,154,240,.15); outline: none; }
+    .score-input.saved { border-color: #51cf66; background: #f0fff4; }
+    .btn-save-row { background: #f1f3f5; color: #495057; border: none; padding: .4rem 1rem; border-radius: 10px; font-weight: 700; font-size: .85rem; transition: all .2s; }
+    .btn-save-row:hover { background: #e9ecef; color: #212529; }
+    .btn-save-row.saving { opacity: 0.7; pointer-events: none; }
+    .btn-back { background: #fff; border: 1px solid #dee2e6; color: #495057; font-weight: 600; padding: .6rem 1.2rem; border-radius: 12px; transition: all .2s; }
+    .btn-back:hover { background: #f8f9fa; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.06); color: #212529; }
+    .save-msg { position: fixed; bottom: 2rem; right: 2rem; background: #40c057; color: #fff; padding: .75rem 1.5rem; border-radius: 12px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,.15); transform: translateY(120%); opacity: 0; transition: all .35s ease; z-index: 9999; }
+    .save-msg.show { transform: translateY(0); opacity: 1; }
+    .save-msg.error { background: #fa5252; }
+</style>
+
+<div class="card mb-4 grade-card">
+    <div class="grade-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h4 class="mb-1" style="font-weight: 800; color: #212529; font-size: 1.4rem;">@Model.Title</h4>
+            <span style="color: #868e96; font-weight: 600; font-size: .9rem;">Bilinmir · Qiymətləndirmə cədvəli</span>
+        </div>
+        <a asp-action="Assignments" asp-route-subjectId="@subjectId" asp-route-lessonId="@lessonId" class="btn btn-back text-decoration-none">
+            <i class="ph ph-arrow-left me-2"></i> Tapşırıqlara qayıt
+        </a>
+    </div>
+
+    <div class="info-strip">
+        <div class="info-chip"><i class="ph ph-calendar-dots"></i> Son tarix: @Model.DueDate.ToString("dd.MM.yyyy")</div>
+        @if (isClosed)
+        {
+            <div class="info-chip" style="color: #e03131;"><i class="ph ph-lock-simple" style="color: #e03131;"></i> Bağlı</div>
+        }
+        else
+        {
+            <div class="info-chip" style="color: #2b8a3e;"><i class="ph ph-lock-open" style="color: #2b8a3e;"></i> Açıq</div>
+        }
+    </div>
+
+    <div class="grade-body">
+        @if (submissions == null || submissions.Count == 0)
+        {
+            <div style="text-align: center; padding: 60px 20px; color: #adb5bd;">
+                <i class="ph ph-users-three" style="font-size: 3.5rem; margin-bottom: 16px; display: block;"></i>
+                <p style="font-weight: 600; font-size: 1rem;">Bu tapşırıq üçün təhvil verilmiş iş tapılmadı.</p>
+                <div class="alert alert-info mt-3 d-inline-block text-start">
+                    <strong>Məlumat (TODO):</strong> Qeyri-fayl tipli (Məşğələ, Kollokvium) tapşırıqlar üzrə<br />
+                    fayl yükləməyən tələbələrə qiymət yazmaq üçün Application<br />
+                    layer-də mövcud handler (məsələn, GradeNonSubmission) yoxdur.<br />
+                    Bu səbəbdən yalnız fayl yükləmiş (Submission-ı olan) tələbələr göstərilir.
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table grade-table" id="gradeTable">
+                    <thead>
+                        <tr>
+                            <th class="ps-4" style="width: 50px;">№</th>
+                            <th>Tələbə</th>
+                            <th class="text-center">Tarix</th>
+                            <th class="text-center" style="width: 120px;">Bal</th>
+                            <th class="text-center" style="width: 120px;">Əməliyyat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int row = 1; }
+                        @foreach (var sub in submissions)
+                        {
+                            <tr>
+                                <td class="ps-4 text-muted fw-bold">@(row++)</td>
+                                <td>
+                                    <div class="student-name">@sub.StudentFullName</div>
+                                    <div class="student-num">@sub.StudentId</div>
+                                </td>
+                                <td class="text-center">@sub.SubmissionDate.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td class="text-center">
+                                    <input type="number"
+                                           class="score-input"
+                                           id="score-@sub.Id"
+                                           min="0"
+                                           placeholder="—" />
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn-save-row" onclick="saveGrade(@sub.Id)">Saxla</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="save-msg" id="saveMsg"></div>
+
+<script>
+    var saveMsg = document.getElementById('saveMsg');
+    function showMessage(text, isError) {
+        saveMsg.textContent = text;
+        saveMsg.className = 'save-msg show' + (isError ? ' error' : '');
+        setTimeout(function () { saveMsg.className = 'save-msg'; }, 3000);
+    }
+
+    window.saveGrade = function(submissionId) {
+        var inp = document.getElementById('score-' + submissionId);
+        var val = inp.value.trim();
+        if (val === '') {
+            showMessage('Bal daxil edilməyib.', true);
+            return;
+        }
+
+        var btn = event.target;
+        btn.classList.add('saving');
+        btn.innerHTML = '...';
+
+        fetch('@Url.Action("GradeSubmission", "TeacherPortal")', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                SubmissionId: parseInt(submissionId), 
+                Grade: parseInt(val),
+                TeacherFeedback: ''
+            })
+        })
+        .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+        .then(function (result) {
+            if (result.ok) {
+                showMessage(result.data.message || 'Saxlanıldı!', false);
+                inp.classList.add('saved');
+                setTimeout(function () { inp.classList.remove('saved'); }, 2000);
+            } else {
+                showMessage(result.data.message || 'Xəta baş verdi.', true);
+            }
+        })
+        .catch(function () { showMessage('Şəbəkə xətası.', true); })
+        .finally(function () {
+            btn.classList.remove('saving');
+            btn.innerHTML = 'Saxla';
+        });
+    };
+</script>

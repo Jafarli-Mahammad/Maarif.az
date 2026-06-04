@@ -166,6 +166,96 @@ namespace Presentation.Controllers
             return Ok(new { message = "Grade saved successfully." });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Assignments(int lessonId, int subjectId, CancellationToken cancellationToken)
+        {
+            var userId = User.GetRequiredUserId();
+            var profile = await mediator.Send(
+                new GetTeacherPortalProfileRequest { UserId = userId },
+                cancellationToken);
+
+            if (profile is null)
+                return RedirectToAction(nameof(AuthController.TeacherLogin), "Auth");
+
+            PopulateTeacherSubjectViewBag(profile, "Tapşırıqlar", "Tapşırıqlar");
+            ViewBag.SubjectId = subjectId;
+            ViewBag.LessonId = lessonId;
+
+            var assignments = await mediator.Send(
+                new Application.Modules.AssignmentsModule.Queries.GetAssignmentsByLesson.GetAssignmentsByLessonQuery { LessonId = lessonId },
+                cancellationToken);
+
+            return View(assignments);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AssignmentDetail(int id, int lessonId, int subjectId, CancellationToken cancellationToken)
+        {
+            var userId = User.GetRequiredUserId();
+            var profile = await mediator.Send(
+                new GetTeacherPortalProfileRequest { UserId = userId },
+                cancellationToken);
+
+            if (profile is null)
+                return RedirectToAction(nameof(AuthController.TeacherLogin), "Auth");
+
+            var assignments = await mediator.Send(
+                new Application.Modules.AssignmentsModule.Queries.GetAssignmentsByLesson.GetAssignmentsByLessonQuery { LessonId = lessonId },
+                cancellationToken);
+
+            var assignment = assignments.FirstOrDefault(a => a.Id == id);
+            if (assignment == null)
+                return NotFound();
+
+            PopulateTeacherSubjectViewBag(profile, assignment.Title, "Tapşırıq");
+            ViewBag.SubjectId = subjectId;
+            ViewBag.LessonId = lessonId;
+
+            var submissions = await mediator.Send(
+                new Application.Modules.SubmissionsModule.Queries.GetSubmissionsByAssignment.GetSubmissionsByAssignmentQuery { AssignmentId = id },
+                cancellationToken);
+
+            ViewBag.Submissions = submissions;
+
+            return View(assignment);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GradeSubmission([FromBody] Application.Modules.AssignmentsModule.Commands.GradeSubmission.GradeSubmissionCommand command)
+        {
+            try
+            {
+                var result = await mediator.Send(command);
+                return Ok(new { message = "Qiymət uğurla saxlanıldı." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult GradeNonSubmission()
+        {
+            // TODO: A handler to save grades for students who did not submit a file (non-file assignments) DOES NOT EXIST in the Application layer.
+            // Placeholder action.
+            return BadRequest(new { message = "Gözlənilməyən xəta: Bu əməliyyat üçün Application layer-də handler yoxdur (TODO)." });
+        }
+
+        [HttpGet]
+        public IActionResult DownloadSubmissionFile(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                return NotFound();
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "submissions", fileName);
+            if (!System.IO.File.Exists(filePath))
+                return NotFound();
+
+            var contentType = "application/octet-stream";
+            return PhysicalFile(filePath, contentType, fileName);
+        }
+
         private void PopulateTeacherSubjectViewBag(
             TeacherPortalProfileDto profile,
             string title,
