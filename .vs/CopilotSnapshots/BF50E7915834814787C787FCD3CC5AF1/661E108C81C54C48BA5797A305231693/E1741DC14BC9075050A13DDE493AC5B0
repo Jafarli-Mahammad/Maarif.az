@@ -1,6 +1,0 @@
-﻿namespace Application.Modules.StudentModule.Queries.StudentGetAllQuery
-{
- public class StudentGetAllRequest
- {
- }
-}

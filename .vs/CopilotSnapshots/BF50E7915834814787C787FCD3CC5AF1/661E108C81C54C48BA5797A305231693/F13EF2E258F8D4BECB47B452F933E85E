@@ -1,6 +1,0 @@
-﻿namespace Application.Modules.StudentModule.Commands.StudentAddCommand
-{
- public class StudentAddRequestHandler
- {
- }
-}

@@ -1,6 +1,0 @@
-﻿namespace Application.Modules.TeachersModule.Commands.TeacherAddCommand
-{
-    internal class TeacherAddRequest
-    {
-    }
-}

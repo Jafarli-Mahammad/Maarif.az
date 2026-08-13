@@ -1,8 +1,0 @@
-﻿using MediatR;
-
-namespace Application.Modules.LessonSchedulesModule.Queries.LessonScheduleGetAllQuery
-{
-    public class LessonScheduleGetAllRequest : IRequest<IEnumerable<LessonScheduleGetAllResponseDto>>
-    {
-    }
-}
