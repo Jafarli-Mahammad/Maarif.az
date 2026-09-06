@@ -23,15 +23,12 @@ The solution is divided into the following primary layers:
 *   **Entity Framework Core (EF Core):** For data access and schema migrations.
 *   **MediatR:** For implementing the CQRS pattern and decoupled in-process messaging.
 *   **ASP.NET Core Identity:** For secure authentication, authorization, and role management.
-*   *(Add database provider here, e.g., PostgreSQL, SQL Server)*
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
 *   [.NET 8.0 SDK](https://dotnet.microsoft.com/download) (or current version)
-*   *(Your Database Engine)*
-*   *(Any other local dependencies like Redis, Docker, etc.)*
 
 ### Local Setup
 
